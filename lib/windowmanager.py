@@ -22,4 +22,29 @@ class Window():
         self.h = height
         self.update()
 
- 
+class OpenWindowList():
+    'Retreives a list of open windows along with their positions and dimentions'
+
+    def __init__(self):
+        self.list = []
+        self.__load()
+
+    def __load(self):
+        output = subprocess.check_output(['wmctrl', '-l', '-p', '-G']).decode('utf-8')
+
+        for line in output.split('\n'):
+            tokenList = line.split(None)
+            if len(tokenList) < 6:
+                continue
+
+            x = int(tokenList[2])
+            y = int(tokenList[3])
+            w = int(tokenList[4])
+            h = int(tokenList[5])
+            name = ''
+
+            for i in range(8, len(tokenList)):
+                name += tokenList[i] + ' '
+            
+            win = Window(name.strip(), x, y, w, h)
+            self.list.append(win)
